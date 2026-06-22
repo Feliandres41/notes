@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:passwords/providers/cuentas_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState(){
     super.initState;
     Provider.of<CuentasProvider>(context,listen: false).obtenerDatos();
+    Timer.periodic(Duration(seconds: 1), (timer) => Provider.of<CuentasProvider>(context,listen: false).obtenerDatos());
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final clave = "5204";
@@ -29,6 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final alto = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(onPressed: () {
+          Provider.of<CuentasProvider>(context,listen: false).obtenerDatos();
+        }, icon: Icon(Icons.change_circle_outlined,color: Colors.white,)),
         centerTitle: true,
         title: Text("Cuentas",style: TextStyle(
           color: Colors.white,
@@ -458,8 +464,176 @@ class _HomeScreenState extends State<HomeScreen> {
                                     size: ancho*0.06,
                                     ),
                                   ),
-                                  Icon(Icons.remove_circle_outline_sharp,color: Colors.red,),
-                                  Icon(Icons.edit,color: Colors.amberAccent,)
+                                  GestureDetector(
+                                    onTap: () {
+                                      value.eliminarDato(dato["id"]);
+                                    },
+                                    child: Icon(
+                                      Icons.remove_circle_outline_sharp,color: Colors.red,),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _plataforma.text = dato["plataforma"];
+                                      _cuenta.text = dato["cuenta"];
+                                      _password.text = dato["password"];
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            backgroundColor: const Color.fromARGB(197, 2, 44, 78),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            child: SizedBox(
+                                              width: ancho * 0.8,
+                                              height: alto * 0.5,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(16),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Agregar una nueva cuenta",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 22,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+
+                                                    TextField(
+                                                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                                                      controller: _plataforma,
+                                                      decoration: InputDecoration(
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          
+                                                        ),
+                                                        disabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+
+                                                        ),
+                                                        enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          borderSide: BorderSide(color: Colors.white)
+                                                        ),
+                                                        hint: Center(
+                                                          child: Text("Nombre de la plataforma",style: TextStyle(
+                                                            color: Colors.white
+                                                          ),),
+                                                        ),
+
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: Colors.white
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                    TextField(
+                                                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                                                      controller: _cuenta,
+                                                      decoration: InputDecoration(
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          
+                                                        ),
+                                                        disabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+
+                                                        ),
+                                                        enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          borderSide: BorderSide(color: Colors.white)
+                                                        ),
+                                                        hint: Center(
+                                                          child: Text("Correo de la cuenta",style: TextStyle(
+                                                            color: Colors.white
+                                                          ),),
+                                                        ),
+
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: Colors.white
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                    TextField(
+                                                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                                                      controller: _password,
+                                                      decoration: InputDecoration(
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          
+                                                        ),
+                                                        disabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+
+                                                        ),
+                                                        enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          borderSide: BorderSide(color: Colors.white)
+                                                        ),
+                                                        hint: Center(
+                                                          child: Text("Contraseña",style: TextStyle(
+                                                            color: Colors.white
+                                                          ),),
+                                                        ),
+
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: Colors.white
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                          ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor: Colors.red,
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Text("Cancelar",style: TextStyle(
+                                                            color: Color.fromARGB(255, 255, 255, 255),
+                                                            fontSize: ancho*0.05
+                                                          ),),
+                                                        ),
+
+                                                        ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor: Colors.green,
+                                                          ),
+                                                          onPressed: () {
+                                                            _clave.clear();
+                                                            // Navigator.pop(context);
+                                                            Provider.of<CuentasProvider>(context,listen: false).editarDato(dato["id"],_plataforma.text, _cuenta.text, _password.text);
+                                                            _plataforma.clear();
+                                                            _cuenta.clear();
+                                                            _password.clear();
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Text("Aceptar",style: TextStyle(
+                                                            color: Color.fromARGB(255, 255, 255, 255),
+                                                            fontSize: ancho*0.05
+                                                          ),),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Icon(
+                                      Icons.edit,color: Colors.amberAccent,
+                                    ),
+                                  )
                                 ],
                               ),
                               // Icon(Icons.remove_red_eye)

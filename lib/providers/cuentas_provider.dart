@@ -60,22 +60,19 @@ class CuentasProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> eliminarDato(String id)async{
+  Future<void> eliminarDato(int id)async{
     try{
       final url = Uri.parse("$_url?id=eq.$id");
-      final respuesta = await http.get(
+      final respuesta = await http.delete(
         url,
         headers: {
           "Content-Type":"application/json",
           "apikey": _apikey
         },
       );
-      if(respuesta.statusCode==200 || respuesta.statusCode==201){
-        print("obtenido correctamente");
-        final prueba = jsonDecode(respuesta.body);
-        print(prueba.runtimeType);
-        datosObtenidos = prueba;
-        notifyListeners();
+      if(respuesta.statusCode==204){
+        print("Eliminado correctamente");
+        await obtenerDatos();
       }else{
         print("Error interno");
       }
@@ -84,4 +81,29 @@ class CuentasProvider extends ChangeNotifier{
     }
   }
   
+  Future<void> editarDato (int id,String plataforma, String cuenta, String password)async{
+    try{
+      final url = Uri.parse("$_url?id=eq.$id");
+      final respuesta = await http.patch(
+        url,
+        headers: {
+          "Content-Type":"application/json",
+          "apikey": _apikey,
+        },
+        body: jsonEncode({
+          "plataforma":plataforma,
+          "cuenta":cuenta,
+          "password":password
+        })
+      );
+      if(respuesta.statusCode==204){
+        print("Eliminado correctamente");
+        await obtenerDatos();
+      }else{
+        print("Error interno");
+      }
+    }catch(e){
+      print("Error de conexión");
+    }
+  }
 }
